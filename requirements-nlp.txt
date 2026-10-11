@@ -1,0 +1,4 @@
+# Large dependencies; install at NLP milestone.
+transformers>=4.45,<5.0
+torch>=2.4
+sentencepiece>=0.2

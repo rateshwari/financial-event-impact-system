@@ -1,0 +1,47 @@
+.venv/
+__pycache__/
+.pytest_cache/
+.env
+.DS_Store
+data/raw/*
+data/processed/*
+data/interim/*
+!data/raw/.gitkeep
+!data/processed/.gitkeep
+!data/interim/.gitkeep
+models/
+*.log
+
+# Python artifacts
+*.py[cod]
+.coverage
+htmlcov/
+
+# Secrets and credentials
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+credentials.json
+service-account*.json
+
+# Local editor and OS files
+.vscode/
+.idea/
+.DS_Store
+
+# Generated datasets and model artifacts
+data/raw/*
+data/processed/*
+data/interim/*
+models/
+*.parquet
+*.joblib
+*.pkl
+
+# Preserve directory placeholders
+!data/raw/.gitkeep
+!data/processed/.gitkeep
+!data/interim/.gitkeep

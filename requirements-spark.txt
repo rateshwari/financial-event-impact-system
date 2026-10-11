@@ -1,0 +1,2 @@
+# Requires Java 21 for the tested local Spark environment.
+pyspark==4.0.1
