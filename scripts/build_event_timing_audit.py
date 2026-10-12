@@ -53,6 +53,7 @@ audit.to_csv(OUTPUT, index=False)
 
 print(f"Events audited: {len(audit)}")
 print(f"Output: {OUTPUT}")
+
 print("\nReview template:")
 print(
     audit[
@@ -63,6 +64,7 @@ print(
             "timestamp_confidence",
             "event_date_basis",
             "primary_analysis_eligible",
-        ].to_string(index=False)
-    ]
+        ]
+    ].to_string(index=False)
 )
+
