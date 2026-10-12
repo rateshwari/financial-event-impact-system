@@ -1,6 +1,7 @@
 """Pure decision rules for financial event-study eligibility."""
 
 import pandas as pd
+from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 ALLOWED_CATEGORIES = {"market_wide", "corporate_event"}
 ALLOWED_TICKERS = {
@@ -83,6 +84,36 @@ def evaluate_event_eligibility(
         pending.append("First-public timestamp is not a valid datetime.")
     if timezone.lower() in UNRESOLVED:
         pending.append("Timestamp timezone is missing.")
+    else:
+        try:
+            declared_timezone = ZoneInfo(timezone)
+        except (ZoneInfoNotFoundError, ValueError):
+            pending.append("Timestamp timezone is invalid.")
+        else:
+            parsed_timestamp = pd.to_datetime(
+                timestamp, errors="coerce", utc=False
+            )
+
+            if not pd.isna(parsed_timestamp):
+                timestamp_datetime = parsed_timestamp.to_pydatetime()
+
+                if (
+                    timestamp_datetime.tzinfo is None
+                    or timestamp_datetime.utcoffset() is None
+                ):
+                    pending.append(
+                        "First-public timestamp must include an explicit UTC offset."
+                    )
+                else:
+                    declared_offset = timestamp_datetime.astimezone(
+                        declared_timezone
+                    ).utcoffset()
+
+                    if timestamp_datetime.utcoffset() != declared_offset:
+                        pending.append(
+                            "Timestamp UTC offset does not match the recorded timezone."
+                        )
+
     if source_url.lower() in UNRESOLVED:
         pending.append("Timestamp source URL is missing.")
     if evidence.lower() in UNRESOLVED:

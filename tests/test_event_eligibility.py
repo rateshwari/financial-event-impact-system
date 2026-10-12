@@ -112,3 +112,39 @@ def test_missing_review_date_keeps_event_pending():
 
     assert result["eligibility_decision"] == "pending_review"
     assert "review date" in result["pending_reasons"].lower()
+
+
+def test_invalid_timezone_keeps_event_pending():
+    case = make_case()
+    case["audit"]["timestamp_timezone"] = "Not/A_Real_Timezone"
+
+    result = evaluate_event_eligibility(**case)
+
+    assert result["eligibility_decision"] == "pending_review"
+    assert "timezone" in result["pending_reasons"].lower()
+
+
+def test_timestamp_offset_must_match_recorded_timezone():
+    case = make_case()
+    case["audit"]["first_public_timestamp"] = (
+        "2025-01-15T09:00:00+00:00"
+    )
+    case["audit"]["timestamp_timezone"] = "Asia/Kolkata"
+
+    result = evaluate_event_eligibility(**case)
+
+    assert result["eligibility_decision"] == "pending_review"
+    assert "timezone" in result["pending_reasons"].lower()
+
+
+def test_valid_utc_timestamp_with_utc_timezone_can_be_eligible():
+    case = make_case()
+    case["audit"]["first_public_timestamp"] = (
+        "2025-01-15T09:00:00+00:00"
+    )
+    case["audit"]["timestamp_timezone"] = "UTC"
+
+    result = evaluate_event_eligibility(**case)
+
+    assert result["eligibility_decision"] == "eligible"
+    assert result["pending_reasons"] == ""
