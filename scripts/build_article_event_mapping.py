@@ -113,6 +113,14 @@ if unclassified_june4.any():
 if result["article_url"].duplicated().any():
     raise ValueError("Output contains duplicate article URLs.")
 
+assigned_ids = set(result["event_id"].dropna())
+unknown_ids = assigned_ids - registered_ids
+if unknown_ids:
+    raise ValueError(
+        "Mapping contains event IDs absent from the registry: "
+        f"{sorted(unknown_ids)}"
+    )
+
 if result.loc[rally, "event_id"].nunique(dropna=True) != 1:
     raise ValueError("Rally articles do not map to exactly one event.")
 
