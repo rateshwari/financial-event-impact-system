@@ -16,7 +16,7 @@ ESTIMATION_GAP = 20
 MIN_OBSERVATIONS = 100
 
 # Compare dates with large market moves.
-MARKET_MOVE_THRESHOLD = 0.03  # absolute NIFTY return >= 4%
+MARKET_MOVE_THRESHOLD = 0.03  # absolute NIFTY return >= 3%
 
 df = pd.read_csv(SOURCE, parse_dates=["date"])
 df["date"] = df["date"].dt.normalize()
