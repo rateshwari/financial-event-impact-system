@@ -67,4 +67,3 @@ print(
         ]
     ].to_string(index=False)
 )
-
