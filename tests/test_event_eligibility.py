@@ -80,3 +80,35 @@ def test_missing_event_evidence_keeps_event_pending():
 
     assert result["eligibility_decision"] == "pending_review"
     assert "No article mapped as event evidence." in result["pending_reasons"]
+
+
+def test_malformed_timestamp_keeps_event_pending():
+    case = make_case()
+    case["audit"]["first_public_timestamp"] = "not-a-real-timestamp"
+
+    result = evaluate_event_eligibility(**case)
+
+    assert result["eligibility_decision"] == "pending_review"
+    assert "timestamp" in result["pending_reasons"].lower()
+
+
+def test_unresolved_timestamp_cannot_pass_with_high_confidence():
+    case = make_case()
+    case["audit"]["first_public_timestamp"] = (
+        "Unresolved — earliest disclosure not verified"
+    )
+
+    result = evaluate_event_eligibility(**case)
+
+    assert result["eligibility_decision"] == "pending_review"
+    assert "timestamp" in result["pending_reasons"].lower()
+
+
+def test_missing_review_date_keeps_event_pending():
+    case = make_case()
+    case["manual"]["reviewed_at"] = ""
+
+    result = evaluate_event_eligibility(**case)
+
+    assert result["eligibility_decision"] == "pending_review"
+    assert "review date" in result["pending_reasons"].lower()

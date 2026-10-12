@@ -73,8 +73,14 @@ def evaluate_event_eligibility(
 
     if confidence != "high":
         pending.append("Timestamp confidence is not high.")
-    if timestamp.lower() in UNRESOLVED:
+
+    if (
+        timestamp.lower() in UNRESOLVED
+        or timestamp.lower().startswith(("unresolved", "unknown"))
+    ):
         pending.append("First-public timestamp is unresolved.")
+    elif pd.isna(pd.to_datetime(timestamp, errors="coerce", utc=True)):
+        pending.append("First-public timestamp is not a valid datetime.")
     if timezone.lower() in UNRESOLVED:
         pending.append("Timestamp timezone is missing.")
     if source_url.lower() in UNRESOLVED:
